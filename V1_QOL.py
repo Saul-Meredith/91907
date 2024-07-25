@@ -7,6 +7,7 @@ with open("questions.json") as f:
 FONT = ("Candara", "20")
 heading = ("Goudy Stout", "25", "bold")
 points = []
+question_amount = []
 
 class Introduction:
     def __init__(self):
@@ -16,7 +17,6 @@ class Introduction:
         self.intro_frame.grid(padx= 20, pady= 10)
 
         #Heading
-
         self.heading = Label(self.intro_frame,
                              text= "Quiz of Legends",
                              font= ("Goudy Stout", "30", "bold"))
@@ -28,14 +28,12 @@ class Introduction:
                         "Or will you falter like the latter?")
 
         # Label
-
         self.message = Label(self.intro_frame,
                              text= instructions,
                              font= FONT)
         self.message.grid(row= 1, columnspan= 2)
 
         # Buttons
-
         self.start_button = Button(self.intro_frame,
                             text= "Run the gauntlet",
                             font= FONT,
@@ -49,7 +47,6 @@ class Introduction:
                              width= 15,
                              command= root.destroy)
         self.falter.grid(row= 2, column= 1)
-
         self.mainmenu = MainMenu()
 
     def start(self):
@@ -80,21 +77,40 @@ class MainMenu:
                             justify= "left")
         self.status.grid(rowspan= 2, row= 2, column= 0)
 
-        self.entry = IntVar()
-
+        self.number_of_questions = IntVar()
+        
         self.entry = Entry(self.mainframe,
-                           textvariable= "",
+                           textvariable= self.number_of_questions,
                            font= FONT,
                            width= 12,
                            justify= "center")
         self.entry.grid(row= 2, column= 1)
 
-        self.begin = Button(self.mainframe,
+        self.start_button = Button(self.mainframe,
                             text= "BEGIN",
                             font= FONT,
-                            command= self.begin)
-        self.begin.grid(row= 3, column= 1)
+                            command= self.check_number)
+        self.start_button.grid(row= 3, column= 1)
 
+    def check_number(self):
+
+        self.value = self.number_of_questions.get()
+        question_amount.append(self.value)
+
+        if self.value < 5:
+            error = Label(self.mainframe,
+                          text= "ERROR: Question count too small",
+                          font= FONT)
+            error.grid(row= 4, columnspan= 2)
+
+        elif self.value > 30:
+            error = Label(self.mainframe,
+                          text= "ERROR: Question count too large",
+                          font= FONT)
+            error.grid(row= 4, columnspan= 2)
+        else:
+            self.begin()
+            
     def open_page(self):
         self.mainframe.grid(padx= 10, pady= 10)
     
@@ -105,10 +121,8 @@ class MainMenu:
 
 class MainSystem:
     def __init__(self):
-        
         self.QOLframe = Frame(padx= 10, pady= 10)
         self.QOLframe.grid()
-
     # Heading
         self.heading = Label(self.QOLframe,
                              text= "Quiz Of Legends",
@@ -118,7 +132,6 @@ class MainSystem:
         questions = []
         choices = []
         self.answer = []
-
         for key, value in data.items():
             self.answered = False
             questions.append(value["question"])
@@ -126,80 +139,98 @@ class MainSystem:
             choices.append(value["choice"])
 
 
-        self.question = Label(self.QOLframe,
+        if (question_amount[0] - 1) >= len(points):
+
+            self.question = Label(self.QOLframe,
                               text= questions[len(points)],
                               font= FONT)
-        self.question.grid(row= 1, columnspan= 2)
+            self.question.grid(row= 1, columnspan= 2)
 
-        for x in choices:
+            for x in choices:
 
-            self.answers1 = Button(self.QOLframe,
-                                text= choices[len(points)][0],
-                                font= FONT,
-                                command= lambda 
-                                m= choices[len(points)][0] : 
-                                self.check_correct(m))
-            self.answers1.grid(row= 2, column= 0)
+                self.answers1 = Button(self.QOLframe,
+                                    text= choices[len(points)][0],
+                                    font= FONT,
+                                    command= lambda 
+                                    m= choices[len(points)][0] : 
+                                    self.check_correct(m))
+                self.answers1.grid(row= 2, column= 0)
 
-            self.answers2 = Button(self.QOLframe,
-                                text= choices[len(points)][1],
-                                font= FONT,
-                                command= lambda 
-                                m= choices[len(points)][1] : 
-                                self.check_correct(m))
-            self.answers2.grid(row= 2, column= 1)
+                self.answers2 = Button(self.QOLframe,
+                                    text= choices[len(points)][1],
+                                    font= FONT,
+                                    command= lambda 
+                                    m= choices[len(points)][1] : 
+                                    self.check_correct(m))
+                self.answers2.grid(row= 2, column= 1)
 
-            self.answers3 = Button(self.QOLframe,
-                                text= choices[len(points)][2],
-                                font= FONT,
-                                command= lambda 
-                                m= choices[len(points)][2] : 
-                                self.check_correct(m))
-            self.answers3.grid(row= 3, column= 0)
-            
-            self.answers4 = Button(self.QOLframe,
-                                text= choices[len(points)][3],
-                                font= FONT,
-                                command= lambda 
-                                m= choices[len(points)][3] : 
-                                self.check_correct(m))
-            self.answers4.grid(row= 3, column= 1)
-            print(self.answer)
+                self.answers3 = Button(self.QOLframe,
+                                    text= choices[len(points)][2],
+                                    font= FONT,
+                                    command= lambda 
+                                    m= choices[len(points)][2] : 
+                                    self.check_correct(m))
+                self.answers3.grid(row= 3, column= 0)
+                
+                self.answers4 = Button(self.QOLframe,
+                                    text= choices[len(points)][3],
+                                    font= FONT,
+                                    command= lambda 
+                                    m= choices[len(points)][3] : 
+                                    self.check_correct(m))
+                self.answers4.grid(row= 3, column= 1)
 
-            self.correct = Correct()
-
+        else:
+            self.QOLframe.grid_forget()
+            FinishScreen()
+      
     def check_correct(self, m):
         """Checks if the button in which the user has pushed is correct"""
+        
+
         if self.answer[len(points)] == m:
             points.append(1)
-            print("Correct")
+
         else:
             points.append(0)
-            print("Incorrect")
-
+            
         self.QOLframe.grid_forget()
+        self.correct = Correct()
         self.correct.page_open()
         self.next_question
-
+    
     def next_question(self):
         self.QOLframe = Frame()
         
+
 
 class Correct:
     def __init__(self):
 
         self.correct_frame = Frame(padx= 10, pady= 10)
 
-        self.w = Label(self.correct_frame,
-                  text= "Idk whats going on",
-                  font= heading)
-        self.w.grid(row= 0, columnspan= 2)
+        if points[-1] == 1:
+            self.answer_correct()
+        else:
+            self.answer_incorrect()
 
         self.new_question = Button(self.correct_frame,
                               text= "next question",
                               font= FONT,
                               command= self.return_to_question)
         self.new_question.grid(row= 1, columnspan= 2)
+
+    def answer_correct(self):
+        self.w = Label(self.correct_frame,
+            text= "Correct",
+            font= heading)
+        self.w.grid(row= 0, columnspan= 2)
+
+    def answer_incorrect(self):
+        self.w = Label(self.correct_frame,
+            text= "Incorrect",
+            font= heading)
+        self.w.grid(row= 0, columnspan= 2)
         
     def page_open(self):
         self.correct_frame.grid(padx= 10, pady= 10)
@@ -210,9 +241,29 @@ class Correct:
 
 
 
+class FinishScreen():
+    def __init__(self):
+
+        self.final_frame = Frame(padx= 10, pady= 10)
+        self.final_frame.grid(padx= 10, pady= 10)
+
+        self.title = Label(self.final_frame,
+            text= "Congratulations",
+            font= heading)
+        self.title.grid(row= 0, column= 0, columnspan= 2)
+
+        self.w = Label(self.final_frame,
+                       text= "Points:",
+                       font= FONT)
+        self.w.grid(row= 1, column= 0)
+
+        self.points = Label(self.final_frame,
+                            text= sum(points),
+                            font = FONT)
+        self.points.grid(row= 1, column= 1)
 
 
-
+        
 
 if __name__ == "__main__":
     root = Tk()
