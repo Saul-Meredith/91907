@@ -162,8 +162,6 @@ class MainMenu:
         self.mainframe.grid_forget()
         MainSystem()
 
-
-
 class MainSystem:
     def __init__(self):
         self.QOLframe = Frame(bg= colour2)
@@ -367,8 +365,9 @@ class FinishScreen():
         
     def run_again(self):
         self.final_frame.grid_forget()
+        question_amount.clear()
+        points.clear()
         Introduction()
-
 
 if __name__ == "__main__":
     root = Tk()
