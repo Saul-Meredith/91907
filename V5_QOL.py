@@ -329,21 +329,24 @@ class Correct:
 
         self.correct_frame = Frame(bg= colour2)
 
+
+
+        self.new_question = Button(self.correct_frame,
+                    text= "next question",
+                    font= main_font,
+                    borderwidth= 5,
+                    relief= "ridge",
+                    command= self.return_to_question)
+        self.new_question.grid(row= 1, columnspan= 2)
+
         if points[-1] == 1:
             self.answer = "Correct"
+            self.new_question.config(bg = "green")
             self.answer_display()
         else:
             self.answer = "Incorrect"
+            self.new_question.config(bg = "red")
             self.answer_display()
-
-        self.new_question = Button(self.correct_frame,
-                              text= "next question",
-                              font= main_font,
-                              bg = "green",
-                              borderwidth= 5,
-                              relief= "ridge",
-                              command= self.return_to_question)
-        self.new_question.grid(row= 1, columnspan= 2)
 
     def answer_display(self):
         self.w = Label(self.correct_frame,
@@ -390,7 +393,9 @@ class FinishScreen():
         self.points.grid(row= 1, column= 1)
 
         if sum(points) == 30:
-            self.legend_status
+            self.end_message = ("Congratulations!\n"
+                                "You truly are worthy to call yourself a legend")
+            self.message()
 
         elif sum(points) == question_amount[0]:
             self.end_message = ("Although you've passed through this challenge\n"
