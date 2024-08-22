@@ -1,14 +1,8 @@
-"""
-Note: that this version is an extras edition that has more add-ons from V4.
-There are many more things that I would like to implement
-however if this design is not finished then V4 will be the final.
-DLC
-"""
 from tkinter import *
+import random
 import json
 with open("challenges.json") as q:
     trial = json.load(q)
-
 heading_colour = "#B8D8D8"
 colour2 = "#7a8E9F"
 colour3 = "#4f6367"
@@ -24,6 +18,7 @@ trials = []
 
 class Introduction:
     def __init__(self):
+        """Introduces the program as well as giving the user a little story"""
         self.intro_frame = Frame(bg= colour2, borderwidth= 6, relief= "ridge")
 
         self.intro_frame.grid(padx= 10, pady= 10)
@@ -75,6 +70,7 @@ class Introduction:
 
 class Category:
     def __init__(self):
+        """This is where the user is able to choose which category in which they would like be quized on"""
         self.category_frame = Frame(bg= colour2, borderwidth= 6, relief= "ridge")
 
         self.heading = Label(self.category_frame,
@@ -92,35 +88,33 @@ class Category:
                           borderwidth= 5,
                           relief= "groove",
                           bg = colour3).grid(row=1, columnspan = 2)
-
-        placement = 1
         
-        for challenges, self.questions in trial.items():
+        placement = 1 # For the position of the button
+        for challenges, self.questions in trial.items(): # Puts the various options into a list
             trials.append(challenges)
 
-        for x in trials:
+        for x in trials: # Displays buttons in a row for the user to choose
             self.label = Button(self.category_frame,
                     font= main_font,
                     text= f"Trial of {x}",
                     bg= colour5,
                     borderwidth= 5,
                     relief= "ridge",
+                    width = 15,
                     command = lambda m= trial[x] : self.chosen_trial(m))
             self.label.grid(column= 0, row= placement + 1, columnspan= 2)
         
             placement += 1
-        self.mainmenu = MainMenu()
-
+        self.mainmenu = MainMenu() # This is so that the frame can be opened
 
     def open_page(self):
         """Opens the frame"""
         self.category_frame.grid(padx= 10, pady= 10)
 
     def chosen_trial(self, m):
-
-        global trial_questions
+        """Changes the frame and assigns variable"""
+        global trial_questions # Globalises trial_questions as it is the trial that has been chosen"
         trial_questions = m
-
         self.category_frame.grid_forget()
         self.mainmenu.open_page()
 
@@ -128,9 +122,9 @@ class Category:
         """Opens the frame"""
         self.category_frame.grid(padx= 10, pady= 10)
 
-
 class MainMenu:
     def __init__(self):
+        """This class is the main menu in which the user is able to choose how many questions they would like to answer"""
         self.mainframe = Frame(bg= colour2, borderwidth= 6, relief= "ridge")
         
         self.heading = Label(self.mainframe,
@@ -195,29 +189,25 @@ class MainMenu:
 
 
     def check_number(self):
-        """Checks the number that the user has inputted is valid, if not then send ERROR message"""
-
+        """Changes the ERROR label to display ERROR message when input is invalid"""
         number_of_questions = self.entry.get()
         value, error_sentence = self.validate_number(number_of_questions)
 
-        if not value:
+        if not value: # Changes the label above to display message
             self.error_message.config(text= error_sentence)
-
         else:
             self.begin()
 
     def validate_number(self, value):
-        """Validates a number and see whether it is appropriate to use"""
+        """Validates the number and returns a message relating to the issue"""
         if str(value) == "":
             return False, "ERROR: Input a number"
-        
         elif not str(value).isdigit():
             return False, "ERROR: Please use a number"
         number = int(value)
         
         if number > 30 or number < 5:
             return False, "ERROR: Number must be from 5-30"
-        
         else:
             question_amount.append(number)
             return True, ""
@@ -233,6 +223,7 @@ class MainMenu:
 
 class MainSystem:
     def __init__(self):
+        """This class is the main system in which everything occurs to make the program work"""
         self.QOLframe = Frame(bg= colour2)
         self.QOLframe.grid(padx= 10, pady= 10)
 
@@ -253,9 +244,10 @@ class MainSystem:
             questions.append(value["question"])
             self.answer.append(value["answer"])
             choices.append(value["choice"])
+            random.shuffle(questions)
 
-
-        if (question_amount[0] - 1) >= len(points): # Checks if the points are smaller than the amount of questions
+        if (question_amount[0] - 1) >= len(points):
+            # If the length of the point are smaller than the amount of questions it will stop the loop
             self.question = Label(self.QOLframe,
                               text= questions[len(points)],
                               bg= colour2,
@@ -264,6 +256,7 @@ class MainSystem:
             self.question.grid(row= 1, columnspan= 2)
 
             for x in choices:
+                # Displays buttons, uses lambda to run the function as well as assinging a variable
                 self.answers1 = Button(self.QOLframe,
                                     text= choices[len(points)][0],
                                     bg = colour5,
@@ -303,33 +296,32 @@ class MainSystem:
                                     command= lambda 
                                     m= choices[len(points)][3] : 
                                     self.check_correct(m)).grid(row= 3, column= 1)
-
-        else: # When the amount of points in a list exceed the question amount the finish screen opens
+        else: # Runs the ending class when every question is answered
             self.QOLframe.grid_forget()
             FinishScreen()
       
     def check_correct(self, m):
         """Checks if the button in which the user has pushed is correct"""
         if self.answer[len(points)] == m:
+            # When answer is equal to the button pressed, user receives a point. If not then user receives a 0.
             points.append(1)
-
         else:
             points.append(0)
             
-        self.QOLframe.grid_forget()
+        self.QOLframe.grid_forget() # Closes this frame and opens the correct class
         self.correct = Correct()
+
         self.correct.open_page()
-        self.next_question
+        self.next_question # Moves to the next question
     
     def next_question(self):
+        """Opens the frame again (Another open page)"""
         self.QOLframe = Frame()
         
 class Correct:
     def __init__(self):
-
+        """Class displays whether the user has gotten a question correct or incorrect"""
         self.correct_frame = Frame(bg= colour2)
-
-
 
         self.new_question = Button(self.correct_frame,
                     text= "next question",
@@ -339,16 +331,17 @@ class Correct:
                     command= self.return_to_question)
         self.new_question.grid(row= 1, columnspan= 2)
 
-        if points[-1] == 1:
+        if points[-1] == 1: # When answer is correct the button will turn green as well as display CORRECT
             self.answer = "Correct"
             self.new_question.config(bg = "green")
             self.answer_display()
-        else:
+        else: # When incorrect button will turn red and display INCORRECT
             self.answer = "Incorrect"
             self.new_question.config(bg = "red")
             self.answer_display()
 
     def answer_display(self):
+        """Label that determines whether correct or incorrect"""
         self.w = Label(self.correct_frame,
                     text= self.answer,
                     bg= colour3,
@@ -358,14 +351,17 @@ class Correct:
                     font= heading).grid(row= 0, columnspan= 2)
         
     def open_page(self):
+        """Opens the frame"""
         self.correct_frame.grid(padx= 10, pady= 10)
 
     def return_to_question(self):
+        """Returns to the main system class while closing this one"""
         self.correct_frame.grid_forget()
         MainSystem().next_question
 
 class FinishScreen():
     def __init__(self):
+        """The final class that displays score and a message depending on the amount of questions correct"""
         self.final_frame = Frame(bg= colour2)
         self.final_frame.grid(padx= 10, pady= 10)
 
@@ -392,26 +388,24 @@ class FinishScreen():
                             font = main_font)
         self.points.grid(row= 1, column= 1)
 
-        if sum(points) == 30:
+        if sum(points) == 30: # Messages avaliable depending on points out of question amount
             self.end_message = ("Congratulations!\n"
                                 "You truly are worthy to call yourself a legend")
             self.message()
-
         elif sum(points) == question_amount[0]:
             self.end_message = ("Although you've passed through this challenge\n"
                            "You must succeed in the gauntlet to truly be a legend")
             self.message()
-
         else:
             self.end_message = ("Alas you have failed my challenge\n" 
                           "while falling short of becoming a true LEGEND")
             self.message()
 
-            
         self.retry = Button(self.final_frame,
                             text= "Retry?",
                             font= main_font,
-                            bg = colour5,
+                            bg= colour5,
+                            width= 15,
                             borderwidth= 5,
                             relief= "ridge",
                             command= self.run_again).grid(row= 3, column= 0)
@@ -425,6 +419,7 @@ class FinishScreen():
                             command= root.destroy).grid(row= 3, column= 1)
         
     def message(self):
+        """Displays the message of what the user has gotten"""
         self.w = Label(self.final_frame,
                 text= self.end_message,
                 bg= colour2,
@@ -433,6 +428,7 @@ class FinishScreen():
         return
         
     def run_again(self):
+        """Resets all data and allows user to play again"""
         self.final_frame.grid_forget()
         question_amount.clear()
         points.clear()
